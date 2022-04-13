@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cw.dao.AdminDAO">
+	<select id="memberSerch" resultType="com.spring.cw.vo.MemberVO">
+		select * from CW_USER;
+	</select>
+	
+	<select id="close" resultType="com.spring.cw.vo.ImformationVO">
+		select * from CW_FACILITY_INFORMATION where FA_NO = #{FA_NO};
+	</select>
+	
+	<select id="closeBank" resultType="com.spring.cw.vo.ImformationVO">
+		select * from CW_FACILITY_INFORMATION;
+	</select>
+	
+	<select id="boogkingCnt" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO};
+	</select>
+	
+	<select id="viewCnt" resultType="int">
+		select count(*) from CW_FACILITY_INFORMATION;
+	</select>
+	
+	<select id="refundCnt1" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and (BOOKING_DELETE = '0' or BOOKING_DELETE = '5');
+	</select>
+	
+	<select id="refundCnt2" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where BOOKING_DELETE = '0';
+	</select>
+	
+	<select id="refundCnt3" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where BOOKING_DELETE = '5';
+	</select>
+	
+	<select id="refundList" resultType="com.spring.cw.vo.BookingVO">
+		<if test="CW_USER_NAME == '' and CW_USER_NUMBER == ''">select * from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and (BOOKING_DELETE = '0' or BOOKING_DELETE = '5') limit #{startIndexNo}, #{pageSize};</if>
+		<if test="CW_USER_NAME != ''">select * from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and CW_USER_NAME like CONCAT('%',#{CW_USER_NAME},'%') and (BOOKING_DELETE = '0' or BOOKING_DELETE = '5');</if>
+		<if test="CW_USER_NUMBER != ''">select * from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and CW_USER_NUMBER like CONCAT('%',#{CW_USER_NUMBER},'%') and (BOOKING_DELETE = '0' or BOOKING_DELETE = '5');</if>
+	</select>
+	
+	<select id="viewUpdate" resultType="com.spring.cw.vo.ImformationVO">
+		select * from CW_FACILITY_INFORMATION where FA_NO = #{FA_NO};
+	</select>
+	
+	<select id="imadminList" resultType="com.spring.cw.vo.ImformationVO">
+		<if test="FA_GROUP == '' and FA_FNAME == '' and FA_METHOD == '' and start == '' and end == ''">select * from CW_FACILITY_INFORMATION limit #{startIndexNo}, #{pageSize};</if>
+		<if test="FA_GROUP != ''">select * from CW_FACILITY_INFORMATION where FA_GROUP = #{FA_GROUP} limit #{startIndexNo}, #{pageSize};</if>
+		<if test="FA_FNAME != ''">select * from CW_FACILITY_INFORMATION where FA_FNAME like CONCAT('%',#{FA_FNAME},'%') limit #{startIndexNo}, #{pageSize};</if>
+		<if test="FA_METHOD != ''">select * from CW_FACILITY_INFORMATION where FA_METHOD like CONCAT('%',#{FA_METHOD},'%') limit #{startIndexNo}, #{pageSize};</if>
+		<if test="start != '' and end != '' and FA_DATE == '접수기간'">select * from CW_FACILITY_INFORMATION <![CDATA[ WHERE FA_AP_START >=#{start} AND FA_AP_END < #{end}]]> ;</if>
+		<if test="start != '' and end != '' and FA_DATE == '운영기간'">select * from CW_FACILITY_INFORMATION <![CDATA[ WHERE FA_OP_START >=#{start} AND FA_OP_END < #{end}]]> ;</if>
+	</select>
+	
+	<select id="viewBooking" resultType="com.spring.cw.vo.BookingVO">
+		<if test="BOOKING_USEDAY == '' and BOOKING_STATUS == '' and BOOKING_APPROVAL == '' and BOOKING_PAYMENT == '' and CW_USER_NAME == '' and CW_USER_NUMBER == ''">select * from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} limit #{startIndexNo}, #{pageSize};</if>
+		<!-- <if test="BOOKING_USEDAY != ''">select IfNull(BOOKING_USEDAY,'x') from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_USEDAY = #{BOOKING_USEDAY};</if>
+		<if test="BOOKING_STATUS != ''">select IfNull(BOOKING_STATUS,'x') from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_STATUS = #{BOOKING_STATUS};</if>
+		<if test="BOOKING_APPROVAL != ''">select IfNull(BOOKING_APPROVAL,'x') from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_APPROVAL = #{BOOKING_APPROVAL};</if>
+		<if test="BOOKING_PAYMENT != ''">select IfNull(BOOKING_PAYMENT,'x') from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_PAYMENT = #{BOOKING_PAYMENT};</if>
+		<if test="CW_USER_NAME != ''">select IfNull(CW_USER_NAME,'x') from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and CW_USER_NAME = #{CW_USER_NAME};</if>
+		<if test="CW_USER_NUMBER != ''">select IfNull(CW_USER_NUMBER,'x') from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and CW_USER_NUMBER = #{CW_USER_NUMBER};</if> -->
+ 		<if test="BOOKING_USEDAY != ''">select * from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_USEDAY = #{BOOKING_USEDAY} limit #{startIndexNo}, #{pageSize};</if>
+		<if test="BOOKING_STATUS != ''">select * from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_STATUS = #{BOOKING_STATUS} limit #{startIndexNo}, #{pageSize};</if>
+		<if test="BOOKING_APPROVAL != ''">select * from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_APPROVAL = #{BOOKING_APPROVAL} limit #{startIndexNo}, #{pageSize};</if>
+		<if test="BOOKING_PAYMENT != ''">select * from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_PAYMENT = #{BOOKING_PAYMENT} limit #{startIndexNo}, #{pageSize};</if>
+		<if test="CW_USER_NAME != ''">select * from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and CW_USER_NAME like CONCAT('%',#{CW_USER_NAME},'%') limit #{startIndexNo}, #{pageSize};</if>
+		<if test="CW_USER_NUMBER != ''">select * from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and CW_USER_NUMBER like CONCAT('%',#{CW_USER_NUMBER},'%') limit #{startIndexNo}, #{pageSize};</if>
+	</select>
+	
+	<select id="viewBookingBoo" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO};
+	</select>
+	
+	<select id="bookingCnt1" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_STATUS = 1;
+	</select>
+	<select id="bookingCnt2" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_STATUS = 3;
+	</select>
+	<select id="bookingCnt3" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_APPROVAL = 1;
+	</select>
+	<select id="bookingCnt4" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_APPROVAL = 2;
+	</select>
+	<select id="bookingCnt5" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_APPROVAL = 3;
+	</select>
+	<select id="bookingCnt6" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_PAYMENT = 0;
+	</select>
+	<select id="bookingCnt7" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_PAYMENT = 1;
+	</select>
+	<select id="bookingCnt8" resultType="int">
+		select count(*) from CW_FACILITY_BOOKING where FA_NO = #{FA_NO} and BOOKING_PAYMENT = 2;
+	</select>
+	
+	<select id="viewBookingFind" resultType="com.spring.cw.vo.BookingVO">
+		select CW_FACILITY_BOOKING.*,CW_FACILITY_INFORMATION.* from CW_FACILITY_BOOKING left join CW_FACILITY_INFORMATION on (CW_FACILITY_BOOKING.FA_NO = CW_FACILITY_INFORMATION.FA_NO) where CW_FACILITY_BOOKING.FA_NO = #{FA_NO} limit 1;
+	</select>
+	
+	<insert id="imforInput">
+		<if test="vo.FA_AP_CH == null">
+			insert into CW_FACILITY_INFORMATION values(default,#{vo.FA_GROUP},#{vo.FA_FNAME},#{vo.FA_INAME},#{vo.FA_ADDRESS},#{vo.FA_AP_START},#{vo.FA_AP_END},#{vo.FA_OP_START},#{vo.FA_OP_END},#{vo.FA_OPTIME_STRAT},#{vo.FA_OPTIME_END},#{vo.FA_OPTIME_CH},#{vo.FA_METHOD},#{vo.FA_PEOPLE_NO},#{vo.FA_NUMBER},#{vo.FA_TARGET},#{vo.FA_PAY},#{vo.FA_DETAILED},#{vo.FA_ATTENTION},#{vo.FA_PHOTO},#{vo.FA_SHOW},default,default,default,default,default,default,'N');
+		</if>
+		<if test="vo.FA_AP_CH != null">
+			insert into CW_FACILITY_INFORMATION values(default,#{vo.FA_GROUP},#{vo.FA_FNAME},#{vo.FA_INAME},#{vo.FA_ADDRESS},#{vo.FA_AP_START},#{vo.FA_AP_END},#{vo.FA_OP_START},#{vo.FA_OP_END},#{vo.FA_OPTIME_STRAT},#{vo.FA_OPTIME_END},#{vo.FA_OPTIME_CH},#{vo.FA_METHOD},#{vo.FA_PEOPLE_NO},#{vo.FA_NUMBER},#{vo.FA_TARGET},#{vo.FA_PAY},#{vo.FA_DETAILED},#{vo.FA_ATTENTION},#{vo.FA_PHOTO},#{vo.FA_SHOW},default,default,default,default,default,default,#{vo.FA_AP_CH});
+		</if>
+	</insert>
+	
+	<update id="closeInput">
+		update CW_FACILITY_INFORMATION set FA_FNAME=#{FA_FNAME},FA_CLOSE_START=#{FA_CLOSE_START},FA_CLOSE_END=#{FA_CLOSE_END},FA_CLOSE_DAY=#{FA_CLOSE_DAY} where FA_NO = #{FA_NO};
+	</update>
+	
+	<update id="inputBankInput">
+		update CW_FACILITY_INFORMATION set FA_BANK_NAME = #{vo.FA_BANK_NAME},FA_BANK_NUM = #{vo.FA_BANK_NUM},FA_BANK_MASTER = #{vo.FA_BANK_MASTER} where FA_FNAME = #{FA_FNAME};
+	</update>
+	
+	<update id="showUpdate">
+		update CW_FACILITY_INFORMATION set FA_SHOW = #{FA_SHOW} where FA_NO = #{FA_NO};
+	</update>
+	
+	<update id="viewUpdateOk">
+		<if test="vo.FA_AP_CH == null">
+			update CW_FACILITY_INFORMATION set FA_GROUP = #{vo.FA_GROUP},FA_FNAME=#{vo.FA_FNAME},FA_INAME=#{vo.FA_INAME},FA_ADDRESS=#{vo.FA_ADDRESS},FA_AP_START=#{vo.FA_AP_START},FA_AP_END=#{vo.FA_AP_END},FA_AP_CH='N',FA_OP_START=#{vo.FA_OP_START},FA_OP_END=#{vo.FA_OP_END},FA_OPTIME_STRAT=#{vo.FA_OPTIME_STRAT},FA_OPTIME_END=#{vo.FA_OPTIME_END},FA_OPTIME_CH=#{vo.FA_OPTIME_CH},FA_METHOD=#{vo.FA_METHOD},FA_PEOPLE_NO=#{vo.FA_PEOPLE_NO},FA_NUMBER=#{vo.FA_NUMBER},FA_TARGET=#{vo.FA_TARGET},FA_PAY=#{vo.FA_PAY},FA_DETAILED=#{vo.FA_DETAILED},FA_ATTENTION=#{vo.FA_ATTENTION},FA_PHOTO=#{vo.FA_PHOTO},FA_SHOW=#{vo.FA_SHOW} where FA_NO = #{vo.FA_NO};
+		</if>
+		<if test="vo.FA_AP_CH != null">
+			update CW_FACILITY_INFORMATION set FA_GROUP = #{vo.FA_GROUP},FA_FNAME=#{vo.FA_FNAME},FA_INAME=#{vo.FA_INAME},FA_ADDRESS=#{vo.FA_ADDRESS},FA_AP_START=#{vo.FA_AP_START},FA_AP_END=#{vo.FA_AP_END},FA_AP_CH=#{vo.FA_AP_CH},FA_OP_START=#{vo.FA_OP_START},FA_OP_END=#{vo.FA_OP_END},FA_OPTIME_STRAT=#{vo.FA_OPTIME_STRAT},FA_OPTIME_END=#{vo.FA_OPTIME_END},FA_OPTIME_CH=#{vo.FA_OPTIME_CH},FA_METHOD=#{vo.FA_METHOD},FA_PEOPLE_NO=#{vo.FA_PEOPLE_NO},FA_NUMBER=#{vo.FA_NUMBER},FA_TARGET=#{vo.FA_TARGET},FA_PAY=#{vo.FA_PAY},FA_DETAILED=#{vo.FA_DETAILED},FA_ATTENTION=#{vo.FA_ATTENTION},FA_PHOTO=#{vo.FA_PHOTO},FA_SHOW=#{vo.FA_SHOW} where FA_NO = #{vo.FA_NO};
+		</if>
+	</update>
+	
+	<update id="closeDelete">
+		update CW_FACILITY_INFORMATION set FA_CLOSE_START='',FA_CLOSE_END= '',FA_CLOSE_DAY= '' where FA_NO = #{FA_NO};
+	</update>
+	
+	<update id="approvalUpdate">
+		update CW_FACILITY_BOOKING set BOOKING_APPROVAL= #{BOOKING_APPROVAL} where BOOKING_NO = #{BOOKING_NO};
+	</update>
+	
+	<update id="paymentUpdate">
+		update CW_FACILITY_BOOKING set BOOKING_PAYMENT= #{BOOKING_PAYMENT} where BOOKING_NO = #{BOOKING_NO};
+	</update>
+	
+	<update id="bookingUpdate">
+		update CW_FACILITY_BOOKING set 
+		CW_USER_BIRTH= #{CW_USER_BIRTH},
+		CW_USER_HOBBY= #{CW_USER_HOBBY},
+		BOOKING_USEDAY= #{BOOKING_USEDAY},
+		BOOKING_USETIME= #{BOOKING_USETIME},
+		BOOKING_PERSONNEL= #{BOOKING_PERSONNEL},
+		CW_USER_NAME= #{CW_USER_NAME}, 
+		CW_USER_NUMBER= #{CW_USER_NUMBER}, 
+		BOOKING_POU= #{BOOKING_POU}
+		where BOOKING_NO = #{BOOKING_NO};
+	</update>
+	
+	<delete id="showDelete">
+		delete from CW_FACILITY_INFORMATION where FA_NO = #{FA_NO};
+	</delete>
+	
+	<delete id="booDelete">
+		delete from CW_FACILITY_BOOKING where BOOKING_NO = #{BOOKING_NO};
+	</delete>
+	
+	<delete id="userDel">
+		delete from CW_USER where CW_USER_NO = #{CW_USER_NO};
+	</delete>
+	
+</mapper>	

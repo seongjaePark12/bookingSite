@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cw.dao.MemberDAO">
+	<select id="getIdCheck" resultType="com.spring.cw.vo.MemberVO">
+		select * from CW_USER where CW_USER_MID = #{CW_USER_MID};
+	</select>
+		
+	<select id="viewCnt" resultType="int">
+		select count(*) from CW_FACILITY_INFORMATION;
+	</select>
+	
+	<select id="imforList1" resultType="com.spring.cw.vo.ImformationVO">
+		select * from CW_FACILITY_INFORMATION;
+	</select>
+	
+	<select id="imforList" resultType="com.spring.cw.vo.ImformationVO">
+		<if test="FA_GROUP == '' and FA_FNAME == '' and FA_METHOD == '' and start == '' and end == ''">select * from CW_FACILITY_INFORMATION limit #{startIndexNo}, #{pageSize};</if>
+		<if test="FA_GROUP != ''">select * from CW_FACILITY_INFORMATION where FA_GROUP = #{FA_GROUP} limit #{startIndexNo}, #{pageSize};</if>
+		<if test="FA_FNAME != ''">select * from CW_FACILITY_INFORMATION where FA_FNAME like CONCAT('%',#{FA_FNAME},'%') limit #{startIndexNo}, #{pageSize};</if>
+		<if test="FA_METHOD != ''">select * from CW_FACILITY_INFORMATION where FA_METHOD like CONCAT('%',#{FA_METHOD},'%') limit #{startIndexNo}, #{pageSize};</if>
+		<if test="start != '' and end != '' and FA_DATE == '접수기간'">select * from CW_FACILITY_INFORMATION <![CDATA[ WHERE FA_AP_START >=#{start} AND FA_AP_END < #{end}]]> ;</if>
+		<if test="start != '' and end != '' and FA_DATE == '운영기간'">select * from CW_FACILITY_INFORMATION <![CDATA[ WHERE FA_OP_START >=#{start} AND FA_OP_END < #{end}]]> ;</if>
+	</select>
+	
+	<select id="bookingList" resultType="com.spring.cw.vo.BookingVO">
+		select * from CW_FACILITY_BOOKING;
+	</select>
+	
+	<select id="bookingListA" resultType="com.spring.cw.vo.BookingVO">
+		<if test="FA_FNAME != ''">select * from CW_FACILITY_BOOKING where CW_USER_NAME = #{name} and CW_USER_NUMBER = #{number} and FA_FNAME like CONCAT('%',#{FA_FNAME},'%');</if>
+		<if test="FA_FNAME == ''">select * from CW_FACILITY_BOOKING where CW_USER_NAME = #{name} and CW_USER_NUMBER = #{number};</if>
+	</select>
+	
+	<select id="bookingListGo" resultType="com.spring.cw.vo.BookingVO">
+		select * from CW_FACILITY_BOOKING where BOOKING_NO = #{BOOKING_NO};
+	</select>
+	
+	<select id="imforListGo" resultType="com.spring.cw.vo.ImformationVO">
+		select * from CW_FACILITY_INFORMATION where FA_NO = #{FA_NO};
+	</select>
+	
+	<select id="refundView" resultType="com.spring.cw.vo.RefundVO">
+		select * from CW_FACILITY_REFUND where BOOKING_NO = #{BOOKING_NO};
+	</select>
+	
+	<select id="bookingListImfor" resultType="com.spring.cw.vo.ImformationVO">
+		select * from CW_FACILITY_INFORMATION where FA_FNAME = #{FA_FNAME};
+	</select>
+	
+	<select id="idCheck" resultType="com.spring.cw.vo.MemberVO">
+		select * from CW_USER where CW_USER_MID = #{CW_USER_MID};
+	</select>
+	
+	<update id="setVisitUpdate">
+		update CW_USER set CW_USER_VISITCNT = CW_USER_VISITCNT + 1,CW_USER_LASTDATE = now() where CW_USER_MID = #{CW_USER_MID};
+	</update>
+	
+	<update id="bookingxx">
+		update CW_FACILITY_BOOKING set BOOKING_STATUS = #{BOOKING_STATUS},BOOKING_DELETE = #{BOOKING_DELETE} where BOOKING_NO = #{BOOKING_NO};
+	</update>
+	
+	<update id="refundOk">
+		update CW_FACILITY_BOOKING set BOOKING_DELETE = #{BOOKING_DELETE} where BOOKING_NO = #{BOOKING_NO};
+	</update>
+	
+	<update id="bookingUpdate">
+		update CW_FACILITY_BOOKING set BOOKING_USEDAY = #{vo.BOOKING_USEDAY},BOOKING_USETIME = #{vo.BOOKING_USETIME},CW_USER_NAME = #{vo.CW_USER_NAME},CW_USER_BIRTH =#{vo.CW_USER_BIRTH},CW_USER_HOBBY=#{vo.CW_USER_HOBBY},CW_USER_NUMBER=#{vo.CW_USER_NUMBER},BOOKING_POU = #{vo.BOOKING_POU} where BOOKING_NO = #{BOOKING_NO};
+	</update>
+	
+	<update id="refundBankUpdate">
+		update CW_FACILITY_REFUND set BOOKING_NO = #{BOOKING_NO},CW_USER_NAME = #{CW_USER_NAME},USER_BANK_NAME = #{USER_BANK_NAME},USER_BANK_NUM =#{USER_BANK_NUM},USER_NAME=#{USER_NAME},REFUND_BIGO=#{REFUND_BIGO} where REFUND_NO = #{REFUND_NO};
+	</update>
+	
+	<insert id="setMemJoin">
+		insert into CW_USER values(default,#{vo.CW_USER_MID},#{vo.CW_USER_PWD},#{vo.CW_USER_NAME},#{vo.CW_USER_BIRTH},#{vo.CW_USER_HOBBY},#{vo.CW_USER_NUMBER},#{vo.CW_USER_ADDRESS},default,default,default,default,default);
+	</insert>
+	
+	<insert id="bookingInput">
+		insert into CW_FACILITY_BOOKING values(default,#{vo.FA_NO},#{vo.FA_FNAME},#{vo.FA_INAME},default,#{vo.BOOKING_USEDAY},#{vo.BOOKING_USETIME},#{vo.BOOKING_PERSONNEL},#{vo.FA_PAY},#{vo.BOOKING_PAY},#{vo.CW_USER_NAME},#{vo.CW_USER_BIRTH},#{vo.CW_USER_HOBBY},#{vo.CW_USER_NUMBER},#{vo.BOOKING_POU},#{vo.BOOKING_STATUS},#{vo.BOOKING_APPROVAL},#{vo.BOOKING_APPROVAL2},#{vo.BOOKING_PAYMENT},#{vo.BOOKING_CNT},#{vo.BOOKING_DELETE});
+	</insert>
+	
+	<insert id="refundBankOk">
+		insert into CW_FACILITY_REFUND values(default,#{BOOKING_NO},#{CW_USER_NAME},#{USER_BANK_NAME},#{USER_BANK_NUM},#{USER_NAME},#{REFUND_BIGO});
+	</insert>
+	
+	<delete id="bookingDelete">
+		delete from CW_FACILITY_BOOKING where BOOKING_NO = #{BOOKING_NO};
+	</delete>
+	
+	<delete id="userDel">
+		delete from CW_USER where CW_USER_MID = #{CW_USER_MID};
+	</delete>
+</mapper>	
